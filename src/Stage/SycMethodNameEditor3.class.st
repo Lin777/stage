@@ -90,6 +90,7 @@ SycMethodNameEditor3 >> alert: aString [
 
 { #category : #services }
 SycMethodNameEditor3 >> editParameter [
+	"Validate the change of name the parameters and update a argumentsList and label"
 	| selected newName|
 	newName := editParameter text asSymbol.
 	selected := argumentsList items at: (argumentsList selection selectedIndex).
@@ -103,6 +104,7 @@ SycMethodNameEditor3 >> editParameter [
 
 { #category : #services }
 SycMethodNameEditor3 >> getKeyOf: aValue [
+	"Get a real parameter's name of extracted method given a new parameter's name"
 	|keyOfValue|
 	editerArgumentList keysAndValuesDo: [ :key :value | 
 		aValue = value ifTrue: [ keyOfValue := key ] ].
@@ -111,12 +113,15 @@ SycMethodNameEditor3 >> getKeyOf: aValue [
 
 { #category : #services }
 SycMethodNameEditor3 >> getParametersOrder [
+	"Get the new parameters order with the old parameters names"
 	^ argumentsList items collect: [ :each | self getKeyOf: each ]
 	
 ]
 
 { #category : #services }
 SycMethodNameEditor3 >> initializeEditerArgumentList [
+	"Create a dictionary with old parameters name as key and value.
+	It value can change after if you rename a parameter"
 	editerArgumentList := Dictionary new.
 	methodName arguments do: [ :each | 
 		editerArgumentList at: each put: each ]
@@ -180,18 +185,8 @@ SycMethodNameEditor3 >> updateItem: selected to: newName [
 ]
 
 { #category : #services }
-SycMethodNameEditor3 >> updateLabel [
-	"Update the new method name to display to the user when the user change its name or order of the arguments."
-
-	previewResult
-		label:
-			(RBMethodName
-				selector: self selectorInput text
-				arguments: argumentsList items) methodName
-]
-
-{ #category : #services }
 SycMethodNameEditor3 >> validateEditParameter [
+	"Validate the rename of a parameter, if exist an error show an alert"
 	self previewResult label = '(invalid)'
 		ifTrue: [ self alert: 'You can not rename parameters if you have an invalid method name' ]
 		ifFalse: [ [ self editParameter  ]
